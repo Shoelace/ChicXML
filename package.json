@@ -1,0 +1,18 @@
+{
+  "name": "chicxml",
+  "version": "0.0.1",
+  "description": "Pretty XML as an HTMLElement",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shoelace/ChicXML.git"
+  },
+  "author": {
+    "name": "David Pyke",
+    "email": "Shoelace@users.noreply.github.com"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,81 @@
+.chicXML
+{
+    font-family: 'Courier New';
+}
+
+
+.chicXML ul
+{
+    list-style: none;
+    margin: 0px;
+    padding-left: 32px;
+}
+
+.chicXML-comment
+{
+    color: green;
+}
+
+.chicXML-tagHeader
+{
+    color: blue;
+}
+
+.chicXML-cdata
+{
+    color: gray;
+}
+
+.chicXML-tagValue
+{
+    color: darkred;
+}
+
+.chicXML-collapsedText
+{
+    color: lightgray;
+}
+.chicXML-collapsedCount
+{
+    color: gray;
+}
+.chicXML-collapsedCount::before
+{
+    content: '('
+}
+.chicXML-collapsedCount::after
+{
+    content: ')'
+}
+
+.chicXML-attrName {
+	color: red;
+}
+
+.chicXML-attrValue {
+	color: blue;
+}
+
+.chicXML span.chicXML-expander, .chicXML span.chicXML-expanderClose
+{
+    height: 12px;
+    width: 12px;
+    display: inline-block;
+}
+
+.chicXML span.chicXML-expanderHeader
+{
+    cursor: pointer;
+}
+
+.chicXML span.chicXML-expander-expanded
+{
+/* useless attribute to stop it from being minified away */
+cursor: pointer;
+}
+
+.chicXML span.chicXML-expander-collapsed
+{
+/* useless attribute to stop it from being minified away */
+cursor: pointer;
+}

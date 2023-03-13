@@ -1,0 +1,101 @@
+.chicXml
+{
+    font-family: ui-monospace, monospace;
+
+}
+
+
+.chicXml ul
+{
+    list-style: none;
+    margin: 0px;
+    padding-left: 32px;
+}
+
+.chicXmlContent
+{
+    /*  */
+    color: black;
+}
+
+.chicXmlComment
+{
+    color: green;
+}
+
+.chicXmlTagHeader
+{
+    color: blue;
+}
+
+.chicXmlCdata
+{
+    color: gray;
+}
+
+.chicXmlTagValue
+{
+    color: darkred;
+}
+
+.chicXmlCollapsedText
+{
+    color: lightgray;
+}
+.chicXmlCollapsedCount
+{
+    color: gray;
+}
+.chicXmlCollapsedCount::before
+{
+    content: '('
+}
+.chicXmlCollapsedCount::after
+{
+    content: ')'
+}
+
+.chicXmlAttribute {
+    /*  */
+    color: purple;
+
+}
+.chicXmlAttrName {
+	color: red;
+}
+
+.chicXmlAttrValue {
+	color: blue;
+}
+
+.chicXml span.chicXmlExpander, .chicXml span.chicXmlExpanderClose
+{
+/*  */
+}
+
+.chicXmlExpanderHeader
+{
+    cursor: pointer;
+
+    /* https://www.htmlsymbols.xyz/arrow-symbols */
+      /* ⯈ 25B6 and 25BC ⯆  \2BC6 */
+/* I use ▸ (0x25B8) for the right arrow, often to show a collapsed list; and I pair it with ▾ (0x25BE) to show the list opened up. Both are unobtrusive. */
+}
+
+.chicXmlExpanderExpanded::before
+{
+/* useless attribute to stop it from being minified away */
+/* cursor: pointer; */
+content: "\2B9F";
+padding-right: 0.25em;
+
+}
+
+.chicXmlExpanderCollapsed::before
+{
+/* useless attribute to stop it from being minified away */
+/* cursor: pointer; */
+content: "\2B9E";
+padding-right: 0.25em;
+}
+

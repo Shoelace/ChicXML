@@ -1,27 +1,21 @@
 {
   "name": "chicxml",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Pretty XML as an HTMLElement",
+  "type": "module",
   "source": "src/chicXML.mjs",
-  "type":"module",
-  "browser": "dist/chicXML.mjs",
+  "style": "src/chicXML.module.css",
+  "browser": "src/chicXML.mjs",
   "browserslist": "> 0.5%, last 2 versions, not dead",
-
-  "port":"9999",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "parcel watch -p 9999",
-    "build": "parcel build -p 9999"
+    "start": ""
   },
   "repository": "github:Shoelace/ChicXML",
   "author": {
     "name": "David Pyke",
     "email": "Shoelace@users.noreply.github.com"
   },
-  "license": "MIT",
-  "@parcel/transformer-css": {
-    "cssModules": {
-      "pattern": "[local]"
-    }
-  }
+  "license": "MIT"
+
 }

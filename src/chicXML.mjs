@@ -1,115 +1,106 @@
-
-import * as styles from './chicXML.css'
-
-// const sheet = new CSSStyleSheet();
-// // Apply a rule to the sheet
-// sheet.replaceSync('a { color: red; }');
-
-// document.adoptedStyleSheets = [...document.adoptedStyleSheets,sheet];
+'use strict'
 
 
-// console.log(styles)
-window.chicstyles = styles
+import * as chicXmlStyles from './chicXML.module.css' assert { type: 'css' }
 
-
-
-export default class ChicXML extends HTMLElement {
-  getstyleclass(stylename){
-    if(styles[stylename])
-      return styles[stylename]
-
-    return stylename
+// console.log(chicXmlStyles)
+//using thsi function we can access the css classnames even if they have been mangled
+function getStyle(style) {
+  if (style in chicXmlStyles) {
+    return chicXmlStyles[style]
   }
+  return style
+}
+
+//only need to do this once
+if ('default' in chicXmlStyles && (typeof chicXmlStyles.default) == "object") {
+  //append stylesheet to global styles
+  document.adoptedStyleSheets = [...document.adoptedStyleSheets, chicXmlStyles.default]
+}
+
+
+class ChicXML extends HTMLElement {
+
+
+
   constructor() {
     // Always call super first in constructor
-    super();
+    super()
 
-    // console.log("in ChicXML constructor")
-    // write element functionality in here
 
-    if (this.hasAttribute("noshadow")){
-    console.log("NOT using shadowdom")
-    this.target = this
-    }else{
-    console.log("using shadowdom")
-    this.target = this.attachShadow({ mode: 'open' });
-      // clone template content nodes to the shadow DOM
-      // shadowRoot.appendChild(template.content.cloneNode(true));
-      let link = document.querySelector("link")
-      if(link){
-        // console.log("use link")
-        this.target.appendChild(link.cloneNode(true));
+    /// define noshadow if you want to style teh xml yourself
+    if (this.hasAttribute("noshadow")) {
+      this.target = this
+
+    } else {
+      this.target = this.attachShadow({ mode: 'open' })
+      if ('default' in chicXmlStyles && (typeof chicXmlStyles.default) == "object") {
+        this.target.adoptedStyleSheets = [chicXmlStyles.default]
       }
 
     }
+
     let s = document.createElement("span")
-    s.className = this.getstyleclass("chicXML")
-    this.target.appendChild ( s)
-
-    // shadowRoot.adoptedStyleSheets = [sheet];
-
-
-    // //TODO: see if there is a better way to do CSS
-    //clone outer css
-    // or embed
+    s.className = getStyle('chicXml')
+    this.target.appendChild(s)
 
   }
   makeSpan(innerText, styleclass = undefined) {
-    let span = document.createElement("span");
-    span.innerText = innerText;
+    let span = document.createElement("span")
+    span.innerText = innerText
 
     if (styleclass != undefined)
-      span.setAttribute("class", this.getstyleclass(styleclass));
+      span.setAttribute("class", styleclass)
 
-    return span;
+    return span
   }
 
   connectedCallback() {
-    console.log('ChicXML  element added to page.');
-
-    let embeddedxml = this.querySelector('xml')
-
-    if (embeddedxml?.innerHTML) {
-      // console.log( embeddedxml.innerHTML.trim())
-      this.chicXML({ xmlString: embeddedxml.innerHTML.trim() });
+    let embeddedxml = this.querySelector('script')
+    if (embeddedxml?.innerHTML && embeddedxml.innerHTML.trim().length > 0) {
+      this.chicXML({ xmlString: embeddedxml.innerHTML.trim() })
       embeddedxml.remove() //remove text as it has been re-rendered inside teh shadow
-    }else{
-      console.warn("no xml child element")
+    } else {
+      //check if it has already been rendered
+      if (!this.target.querySelector(`.${getStyle('chicXml')}`)) {
+        //if not then warn
+        console.warn("no xml in child script element")
+      }
     }
 
   }
 
   disconnectedCallback() {
-    // console.log('ChicXML  element removed from page.');
+    // console.log('ChicXML  element removed from page.')
   }
 
   adoptedCallback() {
-    // console.log('ChicXML  element moved to new page.');
+    // console.log('ChicXML  element moved to new page.')
   }
   static get observedAttributes() {
-    return ["collapsedText", "collapsedCount", "collapsedBelow"];
+    return ["collapsedText", "collapsedCount", "collapsedBelow"]
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     // called when one of attributes listed above is modified
-    console.log(name + " has changed from " + oldValue + " to " + newValue)
-    // this.render()
+    // console.log(name + " has changed from " + oldValue + " to " + newValue)
+    //TODO: do somethign wit teh value
   }
 
 
   addclicks() {
-    let expanders = this.target.querySelector("span").querySelectorAll("."+this.getstyleclass("chicXML-expanderHeader"))
-    // console.log(expanders)
+    let expanders = this.target.querySelector("span").querySelectorAll(`.${getStyle('chicXmlExpanderHeader')}`)
+    console.log(expanders)
 
     expanders.forEach(el => {
       // console.log("adding click to")
       // console.log(el)
       el.addEventListener('click', e => {
 
-        let expander = el.querySelector("."+this.getstyleclass("chicXML-expander"))
-        let content = el.parentElement.querySelector("."+this.getstyleclass("chicXML-content"))
-        let collapsedText = el.parentElement.querySelector("."+this.getstyleclass("chicXML-collapsedText"))
-        let closeExpander = el.parentElement.querySelector("."+this.getstyleclass("chicXML-expanderClose"))
+        let expander = el.querySelector(`.${getStyle('chicXmlExpander')}`)
+        let content = el.parentElement.querySelector(`.${getStyle('chicXmlContent')}`)
+        let collapsedText = el.parentElement.querySelector(`.${getStyle('chicXmlCollapsedText')}`)
+        let closeExpander = el.parentElement.querySelector(`.${getStyle('chicXmlExpanderClose')}`)
 
         // console.log(expander)
         // console.log(content)
@@ -117,24 +108,24 @@ export default class ChicXML extends HTMLElement {
         // console.log(closeExpander)
         // console.log(expander.classList)
 
-        if (expander.classList.contains(this.getstyleclass("chicXML-expander-expanded"))) {
+        if (expander.classList.contains(getStyle('chicXmlExpanderExpanded'))) {
           // Already Expanded, therefore collapse time...
-          expander.classList.remove(this.getstyleclass("chicXML-expander-expanded"))
-          expander.classList.add(this.getstyleclass("chicXML-expander-collapsed"))
+          expander.classList.remove(getStyle('chicXmlExpanderExpanded'))
+          expander.classList.add(getStyle('chicXmlExpanderCollapsed'))
 
-          collapsedText.setAttribute("style", "display: inline;");
-          content.setAttribute("style", "display: none;");
-          closeExpander.setAttribute("style", "display: none");
+          collapsedText.setAttribute("style", "display: inline")
+          content.setAttribute("style", "display: none")
+          closeExpander.setAttribute("style", "display: none")
 
         }
         else {
           // Time to expand..
-          expander.classList.add(this.getstyleclass("chicXML-expander-expanded"))
-          expander.classList.remove(this.getstyleclass("chicXML-expander-collapsed"))
+          expander.classList.add(getStyle('chicXmlExpanderExpanded'))
+          expander.classList.remove(getStyle('chicXmlExpanderCollapsed'))
 
-          collapsedText.setAttribute("style", "display: none;");
-          content.setAttribute("style", "");
-          closeExpander.setAttribute("style", "");
+          collapsedText.setAttribute("style", "display: none")
+          content.setAttribute("style", "")
+          closeExpander.setAttribute("style", "")
         }
 
       })
@@ -158,24 +149,14 @@ export default class ChicXML extends HTMLElement {
   //      collapsedBelow      - nested depth when nodes are collapsed by deafult
   chicXML(options) {
 
-    // This is the easiest way to have default options.
-    // let settings = $.extend({
-    //   // These are the defaults.
-    //   collapsedText: "...",
-    //   collapsedCount: true,
-    //   collapsedBelow: 3,
-    // }, options);
-
 
     let settings = {
       // These are the defaults.
-      collapsedText: this.getAttribute("collapsedText")  ||"...",
+      collapsedText: this.getAttribute("collapsedText") || "...",
       collapsedCount: this.getAttribute("collapsedCount") ? (this.getAttribute("collapsedCount") === "true") : true,
-      collapsedBelow: this.getAttribute("collapsedBelow" ) || 3,
+      collapsedBelow: this.getAttribute("collapsedBelow") || 3,
       xmlString: options.xmlString
-    };
-    console.log("settings")
-    console.log(settings)
+    }
 
     if (settings.xml == undefined && settings.xmlString == undefined)
       throw Error("No XML to be displayed was supplied")
@@ -183,20 +164,14 @@ export default class ChicXML extends HTMLElement {
     if (settings.xml != undefined && settings.xmlString != undefined)
       throw Error("Only one of xml and xmlString may be supplied")
 
-    let xml = settings.xml;
+    let xml = settings.xml
     if (xml == undefined) {
 
-      const parser = new DOMParser();
-      xml = parser.parseFromString(settings.xmlString,"text/xml");
+      const parser = new DOMParser()
+      xml = parser.parseFromString(settings.xmlString, "text/xml")
     }
 
-    // return this.each(function () {
-
-    // console.log("parent=")
-    // console.log(this.target)
-    // console.log(this.target.querySelector("span"))
-
-    this.showNode(this.target.querySelector("span"), xml, settings);
+    this.showNode(this.target.querySelector("span"), xml, settings)
 
     this.addclicks()
 
@@ -206,136 +181,130 @@ export default class ChicXML extends HTMLElement {
   showNode(parent, xml, settings, currentDepth = 1) {
     if (xml.nodeType == 9) {
       for (const element of xml.childNodes)
-        this.showNode(parent, element, settings, currentDepth + 1);
+        this.showNode(parent, element, settings, currentDepth + 1)
 
-      return;
+      return
     }
 
     switch (xml.nodeType) {
       case 1: // chic element
         {
-          const hasChildNodes = xml.childNodes.length > 0;
-          const expandingNode = hasChildNodes && (xml.childNodes.length > 1 || xml.childNodes[0].nodeType != 3);
+          const hasChildNodes = xml.childNodes.length > 0
+          const expandingNode = hasChildNodes && (xml.childNodes.length > 1 || xml.childNodes[0].nodeType != 3)
 
-          const expanderHeader = expandingNode ? this.makeSpan("", "chicXML-expanderHeader") : parent;
+          const expanderHeader = expandingNode ? this.makeSpan("", getStyle('chicXmlExpanderHeader')) : parent
           const startcollapsed = currentDepth > settings.collapsedBelow
 
 
 
-          const expanderSpan = this.makeSpan("", "chicXML-expander");
-          expanderHeader.appendChild(expanderSpan);
+          const expanderSpan = this.makeSpan("", getStyle('chicXmlExpander'))
+          expanderHeader.appendChild(expanderSpan)
 
           if (expandingNode) {
-            if (startcollapsed) {
-              expanderSpan.classList.add(this.getstyleclass("chicXML-expander-collapsed"));
-            }
-            else {
-              expanderSpan.classList.add(this.getstyleclass("chicXML-expander-expanded"));
-            }
-
+            expanderSpan.classList.add(startcollapsed ? getStyle('chicXmlExpanderCollapsed') : getStyle('chicXmlExpanderExpanded'))
           }
 
-          expanderHeader.appendChild(this.makeSpan("<", "chicXML-tagHeader"));
-          expanderHeader.appendChild(this.makeSpan(xml.nodeName, "chicXML-tagValue"));
+          expanderHeader.appendChild(this.makeSpan("<", getStyle('chicXmlTagHeader')))
+          expanderHeader.appendChild(this.makeSpan(xml.nodeName, getStyle('chicXmlTagValue')))
 
           if (expandingNode)
-            parent.appendChild(expanderHeader);
+            parent.appendChild(expanderHeader)
 
           // Handle attributes
-          let attributes = xml.attributes;
+          let attributes = xml.attributes
           for (const element of attributes) {
-            let att = this.makeSpan(" ", "chicXML-attribute")
-            att.appendChild(this.makeSpan(element.name, "chicXML-attrName"));
-            att.appendChild(document.createTextNode('="'));
-            att.appendChild(this.makeSpan(element.value, "chicXML-attrValue"));
-            att.appendChild(document.createTextNode('"'));
+            let att = this.makeSpan(" ", getStyle('chicXmlAttribute'))
+            att.appendChild(this.makeSpan(element.name, getStyle('chicXmlAttrName')))
+            att.appendChild(document.createTextNode('="'))
+            att.appendChild(this.makeSpan(element.value, getStyle('chicXmlAttrValue')))
+            att.appendChild(document.createTextNode('"'))
             expanderHeader.appendChild(att)
           }
 
           // Handle child nodes
           if (hasChildNodes) {
 
-            expanderHeader.appendChild(this.makeSpan(">", "chicXML-tagHeader"));
+            expanderHeader.appendChild(this.makeSpan(">", getStyle('chicXmlTagHeader')))
 
             if (expandingNode) {
-              let ulElement = document.createElement("ul");
+              let ulElement = document.createElement("ul")
               for (const element of xml.childNodes) {
-                let liElement = document.createElement("li");
-                this.showNode(liElement, element, settings, currentDepth + 1);
+                let liElement = document.createElement("li")
+                this.showNode(liElement, element, settings, currentDepth + 1)
                 if (liElement.innerHTML) {
                   //add only if anything rendered
-                  ulElement.appendChild(liElement);
+                  ulElement.appendChild(liElement)
                 }
               }
 
-              let collapsedTextSpan = this.makeSpan(settings.collapsedText, "chicXML-collapsedText");
+              let collapsedTextSpan = this.makeSpan(settings.collapsedText, getStyle('chicXmlCollapsedText'))
               if (settings.collapsedCount && ulElement.childNodes.length > 0) {
-                collapsedTextSpan.appendChild(this.makeSpan(ulElement.childNodes.length, 'chicXML-collapsedCount'))
+                collapsedTextSpan.appendChild(this.makeSpan(ulElement.childNodes.length, getStyle('chicXmlCollapsedCount')))
                 //collapsedTextSpan.innerText += "(" + ulElement.childNodes.length + ")"
               }
-              ulElement.setAttribute("class", this.getstyleclass("chicXML-content"));
-              parent.appendChild(collapsedTextSpan);
-              parent.appendChild(ulElement);
+              ulElement.setAttribute("class", getStyle('chicXmlContent'))
+              parent.appendChild(collapsedTextSpan)
+              parent.appendChild(ulElement)
 
-              let closeExpander = parent.appendChild(this.makeSpan("", "chicXML-expanderClose"));
+              let closeExpander = parent.appendChild(this.makeSpan("", getStyle('chicXmlExpanderClose')))
 
 
               if (startcollapsed) {
-                collapsedTextSpan.setAttribute("style", "display: inline;");
-                ulElement.setAttribute("style", "display: none;");
-                closeExpander.setAttribute("style", "display: none");
+                collapsedTextSpan.setAttribute("style", "display: inline")
+                ulElement.setAttribute("style", "display: none")
+                closeExpander.setAttribute("style", "display: none")
               } else {
-                collapsedTextSpan.setAttribute("style", "display: none;");
+                collapsedTextSpan.setAttribute("style", "display: none")
               }
 
             }
             else {
-              parent.appendChild(this.makeSpan(xml.childNodes[0].nodeValue));
+              parent.appendChild(this.makeSpan(xml.childNodes[0].nodeValue))
             }
 
             // Closing tag
-            parent.appendChild(this.makeSpan("</", "chicXML-tagHeader"));
-            parent.appendChild(this.makeSpan(xml.nodeName, "chicXML-tagValue"));
-            parent.appendChild(this.makeSpan(">", "chicXML-tagHeader"));
+            parent.appendChild(this.makeSpan("</", getStyle('chicXmlTagHeader')))
+            parent.appendChild(this.makeSpan(xml.nodeName, getStyle('chicXmlTagValue')))
+            parent.appendChild(this.makeSpan(">", getStyle('chicXmlTagHeader')))
           } else {
             //closing span
-            expanderHeader.appendChild(this.makeSpan("/>", "chicXML-tagHeader"));
+            expanderHeader.appendChild(this.makeSpan("/>", getStyle('chicXmlTagHeader')))
           }
         }
-        break;
+        break
 
       case 3: // text
         {
           //only create text node if it has a value
           if (xml.nodeValue.trim() !== "") {
-            parent.appendChild(this.makeSpan("", "chicXML-expander"));
-            parent.appendChild(this.makeSpan(xml.nodeValue));
+            parent.appendChild(this.makeSpan("", getStyle('chicXmlExpander')))
+            parent.appendChild(this.makeSpan(xml.nodeValue))
           }
         }
-        break;
+        break
 
       case 4: // cdata
         {
-          parent.appendChild(this.makeSpan("", "chicXML-expander"));
-          parent.appendChild(this.makeSpan("<![CDATA[", "chicXML-tagHeader"));
-          parent.appendChild(this.makeSpan(xml.nodeValue, "chicXML-cdata"));
-          parent.appendChild(this.makeSpan("]]>", "chicXML-tagHeader"));
+          parent.appendChild(this.makeSpan("", getStyle('chicXmlExpander')))
+          parent.appendChild(this.makeSpan("<![CDATA[", getStyle('chicXmlTagHeader')))
+          parent.appendChild(this.makeSpan(xml.nodeValue, getStyle('chicXmlCdata')))
+          parent.appendChild(this.makeSpan("]]>", getStyle('chicXmlTagHeader')))
         }
-        break;
+        break
 
       case 8: // comment
         {
-          parent.appendChild(this.makeSpan("", "chicXML-expander"));
-          parent.appendChild(this.makeSpan("<!--" + xml.nodeValue + "-->", "chicXML-comment"));
+          parent.appendChild(this.makeSpan("", getStyle('chicXmlExpander')))
+          parent.appendChild(this.makeSpan("<!--" + xml.nodeValue + "-->", getStyle('chicXmlComment')))
         }
-        break;
+        break
 
       default:
         {
           let item = this.makeSpan("" + xml.nodeType + " - " + xml.name)
-          parent.appendChild(item);
+          parent.appendChild(item)
         }
-        break;
+        break
     }
 
 
@@ -343,4 +312,8 @@ export default class ChicXML extends HTMLElement {
 
 }
 
-customElements.define("chic-xml", ChicXML);
+customElements.define("chic-xml", ChicXML)
+
+//declare all exports
+export { ChicXML, chicXmlStyles }
+export default ChicXML

@@ -4,8 +4,9 @@
 import * as chicXmlStyles from './chicXML.module.css' assert { type: 'css' }
 
 // console.log(chicXmlStyles)
-//using thsi function we can access the css classnames even if they have been mangled
+//using this function we can access the css classnames even if they have been mangled
 function getStyle(style) {
+  //check if style has been "packed"
   if (style in chicXmlStyles) {
     return chicXmlStyles[style]
   }
@@ -70,13 +71,13 @@ class ChicXML extends HTMLElement {
 
   }
 
-  disconnectedCallback() {
-    // console.log('ChicXML  element removed from page.')
-  }
+  // disconnectedCallback() {
+  //   // console.log('ChicXML  element removed from page.')
+  // }
 
-  adoptedCallback() {
-    // console.log('ChicXML  element moved to new page.')
-  }
+  // adoptedCallback() {
+  //   // console.log('ChicXML  element moved to new page.')
+  // }
   static get observedAttributes() {
     return ["collapsedText", "collapsedCount", "collapsedBelow"]
   }
@@ -84,13 +85,13 @@ class ChicXML extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     // called when one of attributes listed above is modified
     // console.log(name + " has changed from " + oldValue + " to " + newValue)
-    //TODO: do somethign wit teh value
+    //TODO: do somethign with teh value
   }
 
 
   addclicks() {
     let expanders = this.target.querySelector("span").querySelectorAll(`.${getStyle('chicXmlExpanderHeader')}`)
-    console.log(expanders)
+    // console.log(expanders)
 
     expanders.forEach(el => {
       // console.log("adding click to")
